@@ -21,7 +21,7 @@ namespace Yates.SPR
         }
     }
 
-    public class CameraRenderPipeline
+    public partial class CameraRenderPipeline
     {
         private const string _BUFFER_NAME = "Yates Camera Render";
         private static ShaderTagId _unlitShaderTagId = new ShaderTagId("SRPDefaultUnlit");
@@ -29,6 +29,7 @@ namespace Yates.SPR
         private Camera _camera;
         private CommandBuffer _buffer = new CommandBuffer() { name = _BUFFER_NAME};
         private CullingResults _cullingResults;
+
         public void Render(ScriptableRenderContext context, Camera camera)
         {
             this._context = context;
@@ -39,6 +40,7 @@ namespace Yates.SPR
 
             this.SetUp();
             this.DrawVisibleGeometry();
+            this.DrawUnSupportedShaders();
             this.Submit();
         }
 
@@ -85,6 +87,7 @@ namespace Yates.SPR
             this._context.DrawRenderers(this._cullingResults, ref drawingSettings, ref filteringSettings);
         }
 
+        partial void DrawUnSupportedShaders();
         /// <summary>
         /// buffer的执行和清除操作一般是配对使用的
         /// </summary>
