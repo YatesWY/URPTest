@@ -23,7 +23,7 @@ namespace Yates.SPR
 
     public partial class CameraRenderPipeline
     {
-        private const string _BUFFER_NAME = "Yates Camera Render";
+        private const string _BUFFER_NAME = "(Yates Camera Render)";
         private static ShaderTagId _unlitShaderTagId = new ShaderTagId("SRPDefaultUnlit");
         private ScriptableRenderContext _context;
         private Camera _camera;
@@ -35,12 +35,15 @@ namespace Yates.SPR
             this._context = context;
             this._camera = camera;
 
+            this.PrepareBuffer();
+            this.PrepareForSceneWindow();
             if (!this.Cull())
                 return;
 
             this.SetUp();
             this.DrawVisibleGeometry();
             this.DrawUnSupportedShaders();
+            this.DrawGizmos();
             this.Submit();
         }
 
@@ -61,8 +64,8 @@ namespace Yates.SPR
             this._context.SetupCameraProperties(this._camera);
             this._buffer.ClearRenderTarget(true, true, Color.clear);
 
-            // 上面两步是上一次渲染的末尾操作，下面两行是下一次渲染的起始操作s
-            this._buffer.BeginSample(_BUFFER_NAME);
+            // 这里开始profiler采样
+            this._buffer.BeginSample(SampleName);
             this.ExecuteCommandBuffer();
         }
 
@@ -87,7 +90,23 @@ namespace Yates.SPR
             this._context.DrawRenderers(this._cullingResults, ref drawingSettings, ref filteringSettings);
         }
 
+        /// <summary>
+        /// 用于Editor模式下标记不支持的shader
+        /// </summary>
         partial void DrawUnSupportedShaders();
+
+        /// <summary>
+        /// 用于Editor模式下绘制Gizmos
+        /// </summary>
+        partial void DrawGizmos();
+
+        partial void PrepareBuffer();
+
+        /// <summary>
+        /// 用于Editor模式下在Scene场景显示一些东西
+        /// </summary>
+        partial void PrepareForSceneWindow();
+
         /// <summary>
         /// buffer的执行和清除操作一般是配对使用的
         /// </summary>
@@ -99,7 +118,7 @@ namespace Yates.SPR
 
         private void Submit()
         {
-            this._buffer.EndSample(_BUFFER_NAME);
+            this._buffer.EndSample(SampleName);
             this.ExecuteCommandBuffer();
             this._context.Submit();
         }

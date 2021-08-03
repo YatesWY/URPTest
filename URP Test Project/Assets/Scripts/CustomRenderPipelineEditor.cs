@@ -40,6 +40,32 @@ namespace Yates.SPR
             var filteringSettings = FilteringSettings.defaultValue;
             this._context.DrawRenderers(this._cullingResults, ref drawingSettings, ref filteringSettings);
         }
+
+        partial void DrawGizmos()
+        {
+            if (UnityEditor.Handles.ShouldRenderGizmos())
+            {
+                _context.DrawGizmos(_camera, GizmoSubset.PreImageEffects);
+                _context.DrawGizmos(_camera, GizmoSubset.PostImageEffects);
+            }
+        }
+
+        partial void PrepareBuffer()
+        {
+            _buffer.name = SampleName = _camera.name + _BUFFER_NAME;
+        }
+
+        partial void PrepareForSceneWindow()
+        {
+            if (_camera.cameraType == CameraType.SceneView)
+            {
+                ScriptableRenderContext.EmitWorldGeometryForSceneView(_camera);
+            }
+        }
+
+        private string SampleName { get; set; }
+#else
+        private const string SampleName = _BUFFER_NAME;
 #endif
     }
 }
