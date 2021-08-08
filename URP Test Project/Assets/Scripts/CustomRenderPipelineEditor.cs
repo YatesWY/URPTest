@@ -52,7 +52,9 @@ namespace Yates.SPR
 
         partial void PrepareBuffer()
         {
+            UnityEngine.Profiling.Profiler.BeginSample("Editor Only");
             _buffer.name = SampleName = _camera.name + _BUFFER_NAME;
+            UnityEngine.Profiling.Profiler.EndSample();
         }
 
         partial void PrepareForSceneWindow()

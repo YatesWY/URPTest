@@ -62,7 +62,8 @@ namespace Yates.SPR
         {
             // 这一步中设置了unity_MatrixVP
             this._context.SetupCameraProperties(this._camera);
-            this._buffer.ClearRenderTarget(true, true, Color.clear);
+            var flags = this._camera.clearFlags;
+            this._buffer.ClearRenderTarget(flags <= CameraClearFlags.Depth, flags == CameraClearFlags.Color, this._camera.backgroundColor.linear);
 
             // 这里开始profiler采样
             this._buffer.BeginSample(SampleName);
