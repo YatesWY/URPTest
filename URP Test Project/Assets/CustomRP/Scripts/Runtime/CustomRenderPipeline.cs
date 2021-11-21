@@ -8,8 +8,9 @@ namespace Yates.SPR
     public class CustomRenderPipeline : RenderPipeline
     {
         private CameraRenderPipeline _cameraRender;
-        public CustomRenderPipeline()
+        public CustomRenderPipeline(CustomRenderPipelineAsset settings)
         {
+            GraphicsSettings.useScriptableRenderPipelineBatching = settings.UseScriptableRenderPipelineBatching;
             _cameraRender = new CameraRenderPipeline();
         }
         protected override void Render(ScriptableRenderContext context, Camera[] cameras)
